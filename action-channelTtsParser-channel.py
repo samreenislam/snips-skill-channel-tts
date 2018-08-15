@@ -1,22 +1,41 @@
 #!/usr/bin/env python2
+import ConfigParser
 from hermes_python.hermes import Hermes
+from hermes_python.ontology import *
+import io
+
+CONFIGURATION_ENCODING_FORMAT = "utf-8"
+CONFIG_INI = "config.ini"
 
 MQTT_IP_ADDR = "localhost"
 MQTT_PORT = 1883
 MQTT_ADDR = "{}:{}".format(MQTT_IP_ADDR, str(MQTT_PORT))
 
+class SnipsConfigParser(ConfigParser.SafeConfigParser):
+    def to_dict(self):
+        return {section : {option_name : option for option_name, option in self.items(section)} for section in self.sections()}
 
-def intent_received(hermes, intentMessage):
-    if intentMessage.intent.intent_name == 'Channel_up':
-        print('channelUp')
-        sentence += 'Changing channel '
-        
-    else:
-        print("Nope")
-        sentence += 'Nope'
-    
-   hermes.publish_end_session(intentMessage.session_id, sentence)
+def read_configuration_file(configuration_file):
+    try:
+        with io.open(configuration_file, encoding=CONFIGURATION_ENCODING_FORMAT) as f:
+            conf_parser = SnipsConfigParser()
+            conf_parser.readfp(f)
+            return conf_parser.to_dict()
+    except (IOError, ConfigParser.Error) as e:
+        return dict()
+
+def subscribe_intent_callback(hermes, intentMessage):
+    conf = read_configuration_file(CONFIG_INI)
+    action_wrapper(hermes, intentMessage, conf)
 
 
-with Hermes(MQTT_ADDR) as h:
-    h.subscribe_intents(intent_received).start()
+def action_wrapper(hermes, intentMessage, conf):
+    print('channelUp')
+    sentence += 'Changing channel '
+    current_session_id = intentMessage.session_id
+    hermes.publish_end_session(current_session_id, sentence)
+
+if __name__ == "__main__":
+    with Hermes("localhost:1883") as h:
+        h.subscribe_intent("sfi6zy:Channelup", subscribe_intent_callback) \
+         .start()
