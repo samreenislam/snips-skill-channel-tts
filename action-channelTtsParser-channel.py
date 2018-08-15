@@ -6,8 +6,8 @@ MQTT_PORT = 1883
 MQTT_ADDR = "{}:{}".format(MQTT_IP_ADDR, str(MQTT_PORT))
 
 
-def intent_received(hermes, intent_message):
-    if intent_message.intent.intent_name == 'Channel_up':
+def intent_received(hermes, intentMessage):
+    if intentMessage.intent.intent_name == 'Channel_up':
         print('channelUp')
         sentence += 'Changing channel '
         
@@ -15,7 +15,7 @@ def intent_received(hermes, intent_message):
         print("Nope")
         sentence += 'Nope'
     
-   hermes.publish_end_session(intent_message.session_id, sentence)
+   hermes.publish_end_session(intentMessage.session_id, sentence)
 
 
 with Hermes(MQTT_ADDR) as h:
