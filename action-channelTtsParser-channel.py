@@ -26,7 +26,7 @@ def read_configuration_file(configuration_file):
 
 def action_wrapper(hermes, intentMessage, conf):
     print('channelUp')
-    sentence += 'Changing channel '
+    sentence = "Changing channel"
     current_session_id = intentMessage.session_id
     hermes.publish_end_session(current_session_id, sentence)
     
