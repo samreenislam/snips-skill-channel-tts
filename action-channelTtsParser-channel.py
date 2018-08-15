@@ -24,16 +24,17 @@ def read_configuration_file(configuration_file):
     except (IOError, ConfigParser.Error) as e:
         return dict()
 
-def subscribe_intent_callback(hermes, intentMessage):
-    conf = read_configuration_file(CONFIG_INI)
-    action_wrapper(hermes, intentMessage, conf)
-
-
 def action_wrapper(hermes, intentMessage, conf):
     print('channelUp')
     sentence += 'Changing channel '
     current_session_id = intentMessage.session_id
     hermes.publish_end_session(current_session_id, sentence)
+    
+
+def subscribe_intent_callback(hermes, intentMessage):
+    conf = read_configuration_file(CONFIG_INI)
+    action_wrapper(hermes, intentMessage, conf)
+
 
 if __name__ == "__main__":
     with Hermes("localhost:1883") as h:
