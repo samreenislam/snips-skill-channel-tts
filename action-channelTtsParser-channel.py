@@ -118,11 +118,8 @@ def update_socket():
 
 def action_wrapper(hermes, intentMessage, conf):
     print('channelUp')
+    /*
     sentence = "Changing channel"
-    # Initiate asynchronous events
-    ioloop.install()
-    # Start Error Port connection
-    Process(target=register_error_callback, args=(everloop_error_callback, matrix_ip, everloop_port)).start()    
     # Ping the Keep-alive Port once
     ping_socket()
     # Start Data Update Port connection & close after response
@@ -133,6 +130,7 @@ def action_wrapper(hermes, intentMessage, conf):
     # Avoid logging Everloop errors on user quiting
     except KeyboardInterrupt:
         print(' quit')
+    */
     current_session_id = intentMessage.session_id
     hermes.publish_end_session(current_session_id, sentence)
     
